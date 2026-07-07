@@ -6,6 +6,7 @@ from typing import Any
 
 from anomaly_detection.models.base import BaseDetector
 from anomaly_detection.models.deep.autoencoder import AutoencoderDetector
+from anomaly_detection.models.generative.diffusion_detector import DiffusionDetector
 from anomaly_detection.models.ml.isolation_forest import IsolationForestDetector
 from anomaly_detection.models.ml.lof import LOFDetector
 from anomaly_detection.models.ml.ocsvm import OneClassSVMDetector
@@ -19,6 +20,7 @@ DETECTOR_REGISTRY: dict[str, type[BaseDetector]] = {
     "lof": LOFDetector,
     "one_class_svm": OneClassSVMDetector,
     "autoencoder": AutoencoderDetector,
+    "diffusion": DiffusionDetector,
 }
 
 

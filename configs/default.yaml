@@ -11,3 +11,8 @@ model:
 output:
   report_path: reports/run.json
   plot_path: reports/anomalies.png
+llm:
+  enabled: false
+  prompt_path: configs/prompts/anomaly_report.yaml
+  model: claude-3-5-haiku-20241022
+  max_tokens: 1024

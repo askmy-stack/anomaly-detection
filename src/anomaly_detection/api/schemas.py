@@ -61,6 +61,24 @@ class RootCauseResponse(BaseModel):
     disclaimer: str
 
 
+class ExplainRequest(BaseModel):
+    scores: list[float] = Field(..., min_length=1)
+    predictions: list[int] = Field(..., min_length=1)
+    feature_names: list[str] | None = None
+    feature_values: list[float] | None = None
+    model_name: str | None = None
+    config: dict[str, Any] | None = None
+
+
+class ExplainResponse(BaseModel):
+    summary: str
+    remediation_steps: list[str]
+    llm_response: str
+    source: str
+    context: str | None = None
+    error: str | None = None
+
+
 class VisionClassificationResponse(BaseModel):
     media_type: str
     predicted_class: str

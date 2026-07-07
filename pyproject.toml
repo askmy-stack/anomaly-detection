@@ -37,6 +37,12 @@ vision = [
 fairness = [
     "aif360>=0.6",
 ]
+generative = [
+    "scikit-learn>=1.4",
+]
+llm = [
+    "anthropic>=0.40",
+]
 dev = [
     "pytest>=8.0",
     "ruff>=0.3",
