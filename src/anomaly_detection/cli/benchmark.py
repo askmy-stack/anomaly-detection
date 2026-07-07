@@ -40,6 +40,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Use small local fixtures instead of downloading datasets.",
     )
     parser.add_argument(
+        "--profile",
+        action="store_true",
+        help="Profile wall time and peak memory per detector run.",
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Enable verbose logging.",
@@ -58,6 +63,7 @@ def main(argv: list[str] | None = None) -> int:
         dataset_ids=args.datasets,
         detector_names=args.detectors,
         quick=args.quick,
+        profile=args.profile,
         config_path=args.config,
         output_dir=args.output_dir,
     )
