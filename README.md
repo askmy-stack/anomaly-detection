@@ -12,8 +12,6 @@
 
 > **Package name:** The installable Python package remains `anomaly_detection` (`pip install anomaly-detection`). PI-outlier is the project brand; imports use `import anomaly_detection`.
 
-Repository: [github.com/askmy-stack/anomaly-detection](https://github.com/askmy-stack/anomaly-detection)
-
 ## Features
 
 | Area | Capabilities |
@@ -191,7 +189,3 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Please read [docs/EXECUTION_PLAN.md](doc
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
----
-
-Built by [Abhinaysai Kamineni](https://github.com/askmy-stack)
