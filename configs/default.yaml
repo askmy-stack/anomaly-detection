@@ -1,0 +1,21 @@
+# Default configuration for anomaly detection pipeline.
+# Full schema and validation arrive in later phases.
+
+project:
+  name: anomaly-detection
+  seed: 42
+
+data:
+  registry: datasets/registry.yaml
+
+preprocessing:
+  scale: standard
+
+models:
+  default: isolation_forest
+
+evaluation:
+  metrics:
+    - precision
+    - recall
+    - f1
