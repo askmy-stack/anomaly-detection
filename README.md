@@ -1,8 +1,18 @@
-# anomaly-detection
+# PI-outlier
 
+*Anomaly detection framework for tabular, time-series, and vision data*
+
+[![CI](https://github.com/askmy-stack/anomaly-detection/actions/workflows/ci.yml/badge.svg)](https://github.com/askmy-stack/anomaly-detection/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-A modular anomaly-detection framework for tabular, time-series, and vision data — evolved from UCF crime-classification notebooks into a community-ready Python package with CLI, REST API, streaming, RCA, fairness, and LLM explanations.
+![PI-outlier demo](assets/pi-outlier-demo.gif)
+
+**PI-outlier** is a modular anomaly-detection framework evolved from UCF crime-classification notebooks into a community-ready Python package. It ships with CLI tools, a REST API, streaming detectors, root-cause analysis, fairness metrics, and optional LLM explanations.
+
+> **Package name:** The installable Python package remains `anomaly_detection` (`pip install anomaly-detection`). PI-outlier is the project brand; imports use `import anomaly_detection`.
+
+Repository: [github.com/askmy-stack/anomaly-detection](https://github.com/askmy-stack/anomaly-detection)
 
 ## Features
 
@@ -21,10 +31,29 @@ A modular anomaly-detection framework for tabular, time-series, and vision data 
 
 See [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md) for the phased roadmap and [CHANGELOG.md](CHANGELOG.md) for release history.
 
+## Open Source Contributions
+
+We welcome contributions! Here's how to get involved:
+
+| Area | Good first issues | Skills needed |
+| --- | --- | --- |
+| **Detectors** | New algorithms, sklearn wrappers, diffusion tuning | Python, ML |
+| **Data loaders** | Dataset registry entries, OpenML/CSV adapters | Python, pandas |
+| **API & CLI** | FastAPI endpoints, `detect`/`benchmark`/`stream` flags | Python, FastAPI |
+| **Vision** | UCF module, Grad-CAM, TensorFlow model paths | Python, CV |
+| **Streaming** | PySAD wrappers, online z-score window | Python, time-series |
+| **RCA** | Causal graph scoring, metric ranking | Python, statistics |
+| **Fairness & ethics** | AIF360 integration, bias mitigation | ML fairness |
+| **LLM** | Explainer prompts, PII redaction rules | Python, LLM APIs |
+| **Docs & tutorials** | `docs/tutorials/`, API examples | Markdown |
+| **Evaluation** | Benchmark harness, profiler, metrics | Python, pytest |
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md).
+
 ## Project layout
 
 ```
-src/anomaly_detection/   # installable package
+src/anomaly_detection/   # installable package (import path unchanged)
   models/                # tabular & deep detectors
   api/                   # FastAPI routes
   cli/                   # detect, benchmark, stream
