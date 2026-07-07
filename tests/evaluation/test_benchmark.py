@@ -45,6 +45,20 @@ def test_benchmark_cli_quick(tmp_path: Path) -> None:
     assert len(reports) == 1
 
 
+def test_benchmark_quick_with_profile(tmp_path: Path) -> None:
+    report_path = run_benchmark(
+        dataset_ids=["credit_card_fraud"],
+        detector_names=["zscore"],
+        quick=True,
+        profile=True,
+        output_dir=tmp_path,
+    )
+
+    content = report_path.read_text(encoding="utf-8")
+    assert "Performance profiling" in content
+    assert "Wall time" in content
+
+
 def test_benchmark_module_invocation(tmp_path: Path) -> None:
     result = subprocess.run(
         [

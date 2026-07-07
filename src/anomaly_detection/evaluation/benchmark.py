@@ -8,9 +8,12 @@ from pathlib import Path
 from typing import Any
 
 from anomaly_detection.config.loader import load_config
+from anomaly_detection.data_ingestion.loader import load_dataset_from_config
 from anomaly_detection.data_ingestion.registry import load_registry
-from anomaly_detection.models.registry import DETECTOR_REGISTRY
+from anomaly_detection.evaluation.profiler import profile_detector
+from anomaly_detection.models.registry import DETECTOR_REGISTRY, create_detector_from_config
 from anomaly_detection.pipeline import run_detection
+from anomaly_detection.preprocessing.scaler import apply_scaler
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_BENCHMARK_CONFIG = REPO_ROOT / "configs" / "benchmark.yaml"
@@ -41,11 +44,9 @@ def _metric_value(metrics: dict[str, Any] | None, key: str) -> str:
     return str(value)
 
 
-def _run_single(
+def _build_run_config(
     dataset_id: str,
     detector_name: str,
-    *,
-    quick: bool,
     base_config: dict[str, Any],
 ) -> dict[str, Any]:
     config = {
@@ -58,6 +59,35 @@ def _run_single(
     }
     if "fairness" in base_config:
         config["fairness"] = base_config["fairness"]
+    return config
+
+
+def _profile_detector_run(config: dict[str, Any], *, quick: bool) -> dict[str, Any]:
+    dataset_config = config.get("dataset", {})
+    features, _, _ = load_dataset_from_config(dataset_config, quick=quick)
+    preprocessing_config = config.get("preprocessing", {})
+    scaled_features = apply_scaler(features, preprocessing_config.get("scaler"))
+    model_config = config.get("model", {})
+    detector_name = str(model_config.get("name", "unknown"))
+
+    def fit_predict_fn(X: Any) -> None:
+        detector = create_detector_from_config(config)
+        detector.fit(X)
+        detector.predict(X)
+        detector.score(X)
+
+    return profile_detector(detector_name, scaled_features, fit_predict_fn)
+
+
+def _run_single(
+    dataset_id: str,
+    detector_name: str,
+    *,
+    quick: bool,
+    base_config: dict[str, Any],
+    profile: bool = False,
+) -> dict[str, Any]:
+    config = _build_run_config(dataset_id, detector_name, base_config)
     report = run_detection(config, quick=quick)
     result = {
         "dataset": dataset_id,
@@ -68,6 +98,8 @@ def _run_single(
     }
     if "fairness_metrics" in report:
         result["fairness_metrics"] = report["fairness_metrics"]
+    if profile:
+        result["profile"] = _profile_detector_run(config, quick=quick)
     return result
 
 
@@ -76,6 +108,7 @@ def run_benchmark(
     detector_names: list[str] | None = None,
     *,
     quick: bool = False,
+    profile: bool = False,
     config_path: str | Path | None = None,
     output_dir: str | Path | None = None,
 ) -> Path:
@@ -105,6 +138,7 @@ def run_benchmark(
                     detector_name,
                     quick=quick,
                     base_config=base_config,
+                    profile=profile,
                 )
             )
 
@@ -113,12 +147,29 @@ def run_benchmark(
     reports_dir.mkdir(parents=True, exist_ok=True)
     report_path = reports_dir / f"benchmark_{timestamp}.md"
     json_path = reports_dir / f"benchmark_{timestamp}.json"
-    report_path.write_text(_format_markdown(results, quick=quick), encoding="utf-8")
-    json_path.write_text(_format_json(results, quick=quick), encoding="utf-8")
+    report_path.write_text(
+        _format_markdown(results, quick=quick, profile=profile),
+        encoding="utf-8",
+    )
+    json_path.write_text(_format_json(results, quick=quick, profile=profile), encoding="utf-8")
     return report_path
 
 
-def _format_markdown(results: list[dict[str, Any]], *, quick: bool) -> str:
+def _profile_value(profile: dict[str, Any] | None, key: str) -> str:
+    if not profile or key not in profile or profile[key] is None:
+        return "—"
+    value = profile[key]
+    if isinstance(value, float):
+        return f"{value:.4f}"
+    return str(value)
+
+
+def _format_markdown(
+    results: list[dict[str, Any]],
+    *,
+    quick: bool,
+    profile: bool = False,
+) -> str:
     mode = "quick (fixtures)" if quick else "full"
     lines = [
         "# Anomaly Detection Benchmark",
@@ -168,12 +219,40 @@ def _format_markdown(results: list[dict[str, Any]], *, quick: bool) -> str:
                     )
                 )
         lines.append("")
+    profile_rows = [row for row in results if row.get("profile")]
+    if profile or profile_rows:
+        lines.extend(
+            [
+                "## Performance profiling",
+                "",
+                "| Dataset | Detector | Samples | Wall time (s) | Peak memory (MB) |",
+                "| --- | --- | ---: | ---: | ---: |",
+            ]
+        )
+        for row in profile_rows:
+            prof = row["profile"]
+            lines.append(
+                "| {dataset} | {detector} | {n_samples} | {wall_time} | {peak_memory} |".format(
+                    dataset=row["dataset"],
+                    detector=row["detector"],
+                    n_samples=prof.get("n_samples", row["n_samples"]),
+                    wall_time=_profile_value(prof, "wall_time_sec"),
+                    peak_memory=_profile_value(prof, "peak_memory_mb"),
+                )
+            )
+        lines.append("")
     return "\n".join(lines)
 
 
-def _format_json(results: list[dict[str, Any]], *, quick: bool) -> str:
+def _format_json(
+    results: list[dict[str, Any]],
+    *,
+    quick: bool,
+    profile: bool = False,
+) -> str:
     payload = {
         "mode": "quick" if quick else "full",
+        "profiled": profile or any(row.get("profile") for row in results),
         "runs": results,
     }
     return json.dumps(payload, indent=2) + "\n"

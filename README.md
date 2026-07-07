@@ -22,6 +22,7 @@ Anomaly detection research repository evolving from vision-based crime classific
 
 - Python package at `src/anomaly_detection/` for config, ingestion, preprocessing, models, evaluation, API, and CLI
 - Roadmap and phased execution plan in [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md)
+- Domain tutorials in [docs/tutorials/](docs/tutorials/)
 
 ## Project layout
 
@@ -35,7 +36,8 @@ examples/legacy-frontend/  # deprecated static site
 Image Anomaly Detection-2/   # image SavedModel (not in git LFS by default)
 Video Anomaly Detection/     # video SavedModel
 tests/                   # pytest suite
-docs/                    # execution plan and design docs
+docs/                    # execution plan, tutorials, and design docs
+  tutorials/             # step-by-step domain guides (Phase 10)
 datasets/                # dataset registry (Phase 4)
 ```
 
@@ -80,6 +82,18 @@ To explore the original vision notebooks:
 ```bash
 jupyter notebook examples/notebooks/
 ```
+
+## Tutorials
+
+Step-by-step guides with runnable commands:
+
+| Tutorial | Topic |
+| --- | --- |
+| [01-tabular-fraud](docs/tutorials/01-tabular-fraud.md) | Credit-card fraud (`configs/examples/fraud.yaml`) |
+| [02-timeseries-iot](docs/tutorials/02-timeseries-iot.md) | NAB time-series and IoT streaming |
+| [03-vision-surveillance](docs/tutorials/03-vision-surveillance.md) | UCF vision classification (supervised) |
+| [04-streaming](docs/tutorials/04-streaming.md) | Online `stream` CLI |
+| [05-fairness](docs/tutorials/05-fairness.md) | Fairness metrics and mitigation |
 
 ## Contributing
 
