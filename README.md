@@ -1,16 +1,16 @@
 # Py-outlier
 
-*Anomaly detection framework for tabular, time-series, and vision data*
+**Modular anomaly detection for tabular, time-series, and vision data — CLI, REST API, streaming, RCA, fairness, and optional LLM explanations.**
 
-[![CI](https://github.com/askmy-stack/anomaly-detection/actions/workflows/ci.yml/badge.svg)](https://github.com/askmy-stack/anomaly-detection/actions/workflows/ci.yml)
+[![CI](https://github.com/askmy-stack/Py-Outlier/actions/workflows/ci.yml/badge.svg)](https://github.com/askmy-stack/Py-Outlier/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-![PI-outlier demo](assets/pi-outlier-demo.gif)
+![Py-outlier demo](assets/py-outlier-demo.gif)
 
-**PI-outlier** is a modular anomaly-detection framework evolved from UCF crime-classification notebooks into a community-ready Python package. It ships with CLI tools, a REST API, streaming detectors, root-cause analysis, fairness metrics, and optional LLM explanations.
+**Py-outlier** is a community-ready Python framework evolved from UCF crime-classification notebooks into a modular anomaly-detection toolkit. Ship detectors in production via CLI or FastAPI, benchmark across registered datasets, stream scores online, rank root causes, audit fairness, and optionally explain anomalies with an LLM.
 
-> **Package name:** The installable Python package remains `anomaly_detection` (`pip install anomaly-detection`). PI-outlier is the project brand; imports use `import anomaly_detection`.
+> **Package name:** The installable Python package remains `anomaly_detection` (`pip install anomaly-detection`). **Py-outlier** is the project brand; imports use `import anomaly_detection`.
 
 ## Features
 
@@ -29,45 +29,61 @@
 
 See [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md) for the phased roadmap and [CHANGELOG.md](CHANGELOG.md) for release history.
 
+## Quick Start
+
+```bash
+git clone https://github.com/askmy-stack/Py-Outlier.git
+cd Py-Outlier
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+detect --config configs/default.yaml
+benchmark --quick
+serve    # REST API on http://localhost:8000
+```
+
 ## Open Source Contributions
 
-We welcome contributions! Here's how to get involved:
+We welcome contributions across detectors, data, APIs, vision, streaming, fairness, docs, and evaluation. Pick an area below and open a draft PR — see [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
-| Area | Good first issues | Skills needed |
-| --- | --- | --- |
-| **Detectors** | New algorithms, sklearn wrappers, diffusion tuning | Python, ML |
-| **Data loaders** | Dataset registry entries, OpenML/CSV adapters | Python, pandas |
-| **API & CLI** | FastAPI endpoints, `detect`/`benchmark`/`stream` flags | Python, FastAPI |
-| **Vision** | UCF module, Grad-CAM, TensorFlow model paths | Python, CV |
-| **Streaming** | PySAD wrappers, online z-score window | Python, time-series |
-| **RCA** | Causal graph scoring, metric ranking | Python, statistics |
-| **Fairness & ethics** | AIF360 integration, bias mitigation | ML fairness |
-| **LLM** | Explainer prompts, PII redaction rules | Python, LLM APIs |
-| **Docs & tutorials** | `docs/tutorials/`, API examples | Markdown |
-| **Evaluation** | Benchmark harness, profiler, metrics | Python, pytest |
+| Area | How to contribute | Module path | Skills |
+| --- | --- | --- | --- |
+| **Detectors** | Add a new algorithm or sklearn wrapper; register in the factory | `src/anomaly_detection/models/` | Python, ML |
+| **Data loaders** | Add registry entries and loader adapters for new datasets | `src/anomaly_detection/data_ingestion/` | Python, pandas |
+| **API & CLI** | Extend FastAPI routes or CLI flags (`detect`, `benchmark`, `stream`) | `src/anomaly_detection/api/`, `src/anomaly_detection/cli/` | Python, FastAPI |
+| **Vision** | Improve UCF module, Grad-CAM, or TensorFlow model paths | `src/anomaly_detection/domains/vision/` | Python, CV |
+| **Streaming** | Wrap PySAD detectors or extend the online z-score window | `src/anomaly_detection/streaming/` | Python, time-series |
+| **RCA** | Improve causal graph scoring and metric ranking | `src/anomaly_detection/rca/` | Python, statistics |
+| **Fairness & ethics** | Extend AIF360 metrics and bias mitigation | `src/anomaly_detection/fairness/` | ML fairness |
+| **LLM** | Tune explainer prompts and PII redaction rules | `src/anomaly_detection/llm/` | Python, LLM APIs |
+| **Docs & tutorials** | Add or update guides under `docs/tutorials/` | `docs/tutorials/` | Markdown |
+| **Evaluation** | Extend benchmark harness, profiler, and metrics | `src/anomaly_detection/evaluation/` | Python, pytest |
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md).
+Also see [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md) for phased priorities and [docs/tutorials/](docs/tutorials/) for domain walkthroughs.
 
-## Project layout
+## Project structure
 
 ```
-src/anomaly_detection/   # installable package (import path unchanged)
-  models/                # tabular & deep detectors
-  api/                   # FastAPI routes
-  cli/                   # detect, benchmark, stream
-  data_ingestion/        # registry + loaders
-  domains/vision/        # UCF classification (optional [vision] extra)
-  streaming/             # online detectors
-  rca/                   # root cause analysis
-  fairness/              # bias metrics & mitigation
-  llm/                   # anomaly explainer
-  multimodal/            # fusion (experimental)
-configs/                 # YAML configuration
-datasets/registry.yaml   # dataset metadata & licenses
-tests/                   # pytest suite (73 tests)
-docs/tutorials/          # step-by-step domain guides
-examples/notebooks/      # original vision notebooks
-examples/legacy-frontend/  # deprecated static site
+Py-Outlier/
+├── src/anomaly_detection/     # installable package (import path unchanged)
+│   ├── models/                # tabular & deep detectors
+│   ├── api/                   # FastAPI routes
+│   ├── cli/                   # detect, benchmark, stream
+│   ├── data_ingestion/        # registry + loaders
+│   ├── domains/vision/        # UCF classification (optional [vision] extra)
+│   ├── streaming/             # online detectors
+│   ├── rca/                   # root cause analysis
+│   ├── fairness/              # bias metrics & mitigation
+│   ├── llm/                   # anomaly explainer
+│   └── multimodal/            # fusion (experimental)
+├── configs/                   # YAML configuration
+├── datasets/registry.yaml     # dataset metadata & licenses
+├── docs/
+│   ├── EXECUTION_PLAN.md      # phased roadmap
+│   └── tutorials/             # step-by-step domain guides
+├── tests/                     # pytest suite
+├── examples/notebooks/        # original vision notebooks
+└── assets/                    # README demo GIF and media
 ```
 
 ## Setup
@@ -75,8 +91,8 @@ examples/legacy-frontend/  # deprecated static site
 Requires Python 3.11+.
 
 ```bash
-git clone https://github.com/askmy-stack/anomaly-detection.git
-cd anomaly-detection
+git clone https://github.com/askmy-stack/Py-Outlier.git
+cd Py-Outlier
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
@@ -84,20 +100,20 @@ pip install -e ".[dev]"
 
 ### Optional extras
 
-```bash
-pip install -e ".[dev,streaming]"   # PySAD streaming detectors
-pip install -e ".[dev,rca]"         # root cause analysis
-pip install -e ".[dev,vision]"      # TensorFlow + OpenCV for UCF endpoints
-pip install -e ".[dev,fairness]"    # AIF360 fairness metrics
-pip install -e ".[dev,generative]"  # diffusion detector
-pip install -e ".[dev,llm]"         # Anthropic LLM explainer
-```
+| Extra | Install command | Enables |
+| --- | --- | --- |
+| `streaming` | `pip install -e ".[dev,streaming]"` | PySAD streaming detectors |
+| `rca` | `pip install -e ".[dev,rca]"` | Root cause analysis (PyRCA) |
+| `vision` | `pip install -e ".[dev,vision]"` | TensorFlow + OpenCV UCF endpoints |
+| `fairness` | `pip install -e ".[dev,fairness]"` | AIF360 fairness metrics |
+| `generative` | `pip install -e ".[dev,generative]"` | Diffusion reconstruction detector |
+| `llm` | `pip install -e ".[dev,llm]"` | Anthropic LLM explainer |
 
 Verify the install:
 
 ```bash
 ruff check src tests
-pytest tests/ -v --cov=anomaly_detection
+pytest tests/ -q
 detect --config configs/default.yaml
 benchmark --quick
 serve    # REST API on http://localhost:8000
@@ -189,3 +205,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Please read [docs/EXECUTION_PLAN.md](doc
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+**Py-outlier** by [Abhinaysai Kamineni](https://github.com/askmy-stack) · [GitHub](https://github.com/askmy-stack/Py-Outlier)
