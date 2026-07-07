@@ -435,6 +435,8 @@ Port PR branch endpoints as `/vision/analyze/image` and `/vision/analyze/video` 
 - Label clearly: UCF module is **supervised classification**, not unsupervised AD.
 - Do not conflate crime classes with generic "anomaly score."
 
+**Phase 7 implementation note:** SavedModels remain at the repository root (`Image Anomaly Detection-2/`, `Video Anomaly Detection/`). Configure paths via `configs/examples/vision.yaml`. Install optional `[vision]` extras for TensorFlow/OpenCV.
+
 ---
 
 ## Phase 8: Fairness & Bias Analysis (AIF360)

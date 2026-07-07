@@ -29,6 +29,11 @@ streaming = [
 rca = [
     "pyrca>=1.0",
 ]
+vision = [
+    "tensorflow>=2.15",
+    "opencv-python-headless>=4.9",
+    "pillow>=10.0",
+]
 dev = [
     "pytest>=8.0",
     "ruff>=0.3",

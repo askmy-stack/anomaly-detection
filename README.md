@@ -9,23 +9,31 @@ Anomaly detection research repository evolving from vision-based crime classific
 **What exists today**
 
 - Jupyter notebooks for image and video anomaly detection (TensorFlow/Keras SavedModels)
-- Pre-trained model artifacts under `Image Anomaly Detection-1/`, `Image Anomaly Detection-2/`, and `Video Anomaly Detection/`
+- Pre-trained model artifacts at the repository root:
+  - `Image Anomaly Detection-2/` — image classifier SavedModel
+  - `Video Anomaly Detection/` — video classifier SavedModel
+  - `Image Anomaly Detection-1/` — legacy image model
+- Vision domain module at `src/anomaly_detection/domains/vision/` (Phase 7)
 - Legacy static HTML frontend (deprecated) under `examples/legacy-frontend/`
+
+**Important:** The UCF vision module performs **supervised multi-class classification** (14 crime categories). It is not unsupervised anomaly detection and should not be conflated with the tabular `/detect` API.
 
 **In progress**
 
-- Python package skeleton at `src/anomaly_detection/` for config, ingestion, preprocessing, models, evaluation, API, and CLI
+- Python package at `src/anomaly_detection/` for config, ingestion, preprocessing, models, evaluation, API, and CLI
 - Roadmap and phased execution plan in [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md)
-
-The README previously described a finished tabular ML pipeline; that work is planned for Phases 2–4. This document reflects the repository as it stands after Phase 1 foundation work.
 
 ## Project layout
 
 ```
-src/anomaly_detection/   # installable package (skeleton)
+src/anomaly_detection/   # installable package
+  domains/vision/      # UCF image/video classification (optional [vision] extra)
 configs/                 # YAML configuration
+  examples/vision.yaml   # vision model paths and settings
 examples/notebooks/      # relocated vision notebooks
 examples/legacy-frontend/  # deprecated static site
+Image Anomaly Detection-2/   # image SavedModel (not in git LFS by default)
+Video Anomaly Detection/     # video SavedModel
 tests/                   # pytest suite
 docs/                    # execution plan and design docs
 datasets/                # dataset registry (Phase 4)
@@ -43,13 +51,29 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
+### Optional: vision classification
+
+Install TensorFlow and OpenCV for UCF image/video endpoints:
+
+```bash
+pip install -e ".[dev,vision]"
+```
+
+Model paths are configured in `configs/examples/vision.yaml` (defaults point to SavedModels at repo root).
+
 Verify the install:
 
 ```bash
 pytest tests/ -q
 ruff check src tests
-detect   # prints stub message until Phase 3
+detect   # tabular CLI
+serve    # REST API (includes /vision/analyze/* when [vision] installed)
 ```
+
+Vision API endpoints (require `[vision]` extra):
+
+- `POST /vision/analyze/image` — classify a single image
+- `POST /vision/analyze/video` — classify a video (sync frame sampling)
 
 To explore the original vision notebooks:
 
