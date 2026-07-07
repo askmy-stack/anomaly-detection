@@ -34,6 +34,11 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Enable verbose logging.",
     )
+    parser.add_argument(
+        "--explain",
+        action="store_true",
+        help="Append a plain-language anomaly explanation to the report (mock when llm.enabled=false).",
+    )
     return parser
 
 
@@ -98,6 +103,17 @@ def main(argv: list[str] | None = None) -> int:
     config_path = Path(args.config)
     config = load_config(config_path)
     report = run_detection(config)
+
+    if args.explain:
+        from anomaly_detection.llm.explainer import explain_anomaly
+
+        report["explanation"] = explain_anomaly(
+            scores=report["scores"],
+            predictions=report["predictions"],
+            config=config,
+            feature_names=report.get("feature_names"),
+            model_name=report.get("model"),
+        )
 
     output_config = config.get("output", {})
     report_path = Path(args.output or output_config.get("report_path", "reports/run.json"))
