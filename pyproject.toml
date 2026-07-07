@@ -10,11 +10,6 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Abhinaysai Kamineni" }]
-
-[project.urls]
-Homepage = "https://github.com/askmy-stack/anomaly-detection"
-Repository = "https://github.com/askmy-stack/anomaly-detection"
-Documentation = "https://github.com/askmy-stack/anomaly-detection#readme"
 dependencies = [
     "numpy>=1.26",
     "pandas>=2.1",
@@ -25,6 +20,11 @@ dependencies = [
     "uvicorn>=0.27",
     "python-multipart>=0.0.9",
 ]
+
+[project.urls]
+Homepage = "https://github.com/askmy-stack/Py-Outlier"
+Repository = "https://github.com/askmy-stack/Py-Outlier"
+Documentation = "https://github.com/askmy-stack/Py-Outlier#readme"
 
 [project.optional-dependencies]
 streaming = [
