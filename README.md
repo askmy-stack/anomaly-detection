@@ -1,4 +1,4 @@
-# PI-outlier
+# Py-outlier
 
 *Anomaly detection framework for tabular, time-series, and vision data*
 
