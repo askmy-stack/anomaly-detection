@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "anomaly-detection"
 version = "1.0.0"
-description = "Anomaly detection framework for tabular and time-series data"
+description = "PI-outlier — anomaly detection framework for tabular, time-series, and vision data"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -20,6 +20,11 @@ dependencies = [
     "uvicorn>=0.27",
     "python-multipart>=0.0.9",
 ]
+
+[project.urls]
+Homepage = "https://github.com/askmy-stack/Py-Outlier"
+Repository = "https://github.com/askmy-stack/Py-Outlier"
+Documentation = "https://github.com/askmy-stack/Py-Outlier#readme"
 
 [project.optional-dependencies]
 streaming = [

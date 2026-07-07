@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2026-07-07
 
-First community-ready release of the anomaly-detection framework, completing Phases 1–11 of the execution plan.
+First community-ready release of **PI-outlier** (Python package `anomaly_detection`), completing Phases 1–11 of the execution plan.
 
 ### Added
 
