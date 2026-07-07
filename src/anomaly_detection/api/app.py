@@ -12,6 +12,15 @@ from anomaly_detection.api.routes.detect import router as detect_router
 from anomaly_detection.api.routes.root_cause import router as root_cause_router
 from anomaly_detection.api.schemas import HealthResponse
 
+try:
+    import tensorflow  # noqa: F401
+
+    from anomaly_detection.api.routes.vision import router as vision_router
+
+    _VISION_AVAILABLE = True
+except ImportError:
+    _VISION_AVAILABLE = False
+
 APP_NAME = "anomaly-detection"
 APP_VERSION = "0.1.0"
 
@@ -55,6 +64,8 @@ def health() -> HealthResponse:
 
 app.include_router(detect_router)
 app.include_router(root_cause_router)
+if _VISION_AVAILABLE:
+    app.include_router(vision_router)
 
 
 def run() -> None:

@@ -59,3 +59,13 @@ class RootCauseResponse(BaseModel):
     graph: dict[str, Any]
     method: str
     disclaimer: str
+
+
+class VisionClassificationResponse(BaseModel):
+    media_type: str
+    predicted_class: str
+    confidence: float
+    class_index: int
+    all_scores: dict[str, float]
+    disclaimer: str
+    n_frames: int | None = None
