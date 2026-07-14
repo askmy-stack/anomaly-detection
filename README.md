@@ -159,6 +159,9 @@ All routes above except `/health`, `/docs`, `/redoc`, and `/openapi.json` requir
 an `X-API-Key` header matching `ANOMALY_API_KEY` when that env var is set. Leave
 it unset for local/dev use (no auth required).
 
+`/detect` and `/detect/batch` reject payloads over `MAX_DETECT_ROWS` rows
+(default 100,000) with `413 Content Too Large`.
+
 ## Benchmark results (quick mode, fixtures)
 
 Run `benchmark --quick` locally to reproduce. Representative results on test fixtures:
