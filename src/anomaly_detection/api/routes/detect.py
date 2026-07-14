@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import os
 from typing import Annotated, Any
 
 import numpy as np
@@ -18,10 +19,34 @@ from anomaly_detection.pipeline import _deep_merge, run_detection
 router = APIRouter(tags=["detect"])
 
 DEFAULT_CONFIG_PATH = "configs/default.yaml"
+DEFAULT_MAX_DETECT_ROWS = 100_000
 
 
 def _default_config() -> dict[str, Any]:
     return load_config(DEFAULT_CONFIG_PATH)
+
+
+def _max_detect_rows() -> int:
+    """Row cap for /detect and /detect/batch, configurable via MAX_DETECT_ROWS."""
+    raw = os.environ.get("MAX_DETECT_ROWS", "").strip()
+    if not raw:
+        return DEFAULT_MAX_DETECT_ROWS
+    try:
+        value = int(raw)
+    except ValueError:
+        return DEFAULT_MAX_DETECT_ROWS
+    return value if value > 0 else DEFAULT_MAX_DETECT_ROWS
+
+
+def _check_row_limit(n_rows: int) -> None:
+    max_rows = _max_detect_rows()
+    if n_rows > max_rows:
+        # 413 Content Too Large (status.HTTP_413_REQUEST_ENTITY_TOO_LARGE is
+        # deprecated in newer Starlette; use the literal for broad compatibility).
+        raise HTTPException(
+            status_code=413,
+            detail=f"data has {n_rows} rows, which exceeds MAX_DETECT_ROWS ({max_rows})",
+        )
 
 
 @router.get("/models")
@@ -39,7 +64,10 @@ def detect(request: DetectRequest) -> DetectResponse:
         data = np.asarray(request.data, dtype=float)
         if data.ndim != 2:
             raise ValueError("data must be a 2D array")
+        _check_row_limit(data.shape[0])
         report = run_detection(config, data=data)
+    except HTTPException:
+        raise
     except (KeyError, ValueError, FileNotFoundError) as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     except Exception as exc:
@@ -87,6 +115,7 @@ async def detect_batch(
         frame = pd.read_csv(io.BytesIO(raw_bytes))
         if frame.empty:
             raise ValueError("CSV contains no rows")
+        _check_row_limit(len(frame))
 
         target_column = config.get("dataset", {}).get("target_column")
         labels = None
@@ -102,6 +131,8 @@ async def detect_batch(
             labels=labels,
             feature_names=list(feature_frame.columns),
         )
+    except HTTPException:
+        raise
     except (KeyError, ValueError) as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     except Exception as exc:
